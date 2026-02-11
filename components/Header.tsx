@@ -60,9 +60,9 @@ const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleTheme }) => {
                     <Link to="/" className="flex-shrink-0 flex items-center gap-3 group" onClick={() => window.scrollTo(0, 0)}>
                          {/* LOGO IMAGE */}
                          <img 
-                            src="/assets/logo.jpg" 
+                            src="/assets/Arnamar20200.jpg" 
                             alt="Arnamar Logo" 
-                            className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 rounded-md"
                          />
                          <div className="flex flex-col relative">
                             <h1 className="font-display font-bold text-2xl tracking-tighter text-gray-900 dark:text-white group-hover:text-primary transition-colors">

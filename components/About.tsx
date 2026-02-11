@@ -69,9 +69,9 @@ const About: React.FC = () => {
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
                         <div className="relative h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl group">
-                            {/* IMAGEN DE STOCK */}
+                            {/* IMAGEN DE STOCK: Representando planificación y experiencia */}
                             <motion.img 
-                                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop"
+                                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop"
                                 alt="Equipo de Arquitectura y Construcción" 
                                 className="absolute inset-0 w-full h-full object-cover"
                                 whileHover={{ scale: 1.1 }}

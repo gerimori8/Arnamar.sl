@@ -43,7 +43,15 @@ const Project3DCard: React.FC<{ item: any, index: number }> = ({ item, index }) 
             className={`relative rounded-[2rem] overflow-hidden group w-full h-full cursor-pointer bg-gray-900 shadow-xl border border-gray-800 ${item.span || 'col-span-1 row-span-1'}`}
         >
             <div className="w-full h-full relative">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 ease-out scale-110 group-hover:scale-105" />
+                <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out scale-110 group-hover:scale-105" 
+                    onError={(e) => {
+                        // Fallback simple por si falla la carga específica
+                        (e.target as HTMLImageElement).style.opacity = '0.5';
+                    }}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute inset-0 flex flex-col justify-end p-8 pointer-events-none">
                     <motion.div style={{ transform: "translateZ(20px)" }} initial={{ y: 20, opacity: 0 }} animate={isInView ? { y: 0, opacity: 1 } : {}} transition={{ duration: 0.5 }}>
@@ -60,6 +68,7 @@ const Project3DCard: React.FC<{ item: any, index: number }> = ({ item, index }) 
 const Projects: React.FC = () => {
     const { t } = useLanguage();
 
+    // Actualización de rutas según petición del usuario
     const gridItems = [
         {
             type: 'text-main',
@@ -71,42 +80,42 @@ const Projects: React.FC = () => {
             type: 'image',
             title: t.projects.items.new_build,
             desc: t.projects.items.new_build_desc,
-            image: "/assets/exterior3.jpg",
+            image: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg", // Coherencia con servicios
             span: "md:col-span-2 md:row-span-1" 
         },
         {
             type: 'image',
             title: t.projects.items.renovations,
             desc: t.projects.items.renovations_desc,
-            image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=2000&auto=format&fit=crop",
+            image: "/assets/IMG-20210205-WA0005.jpg", 
             span: "md:col-span-1 md:row-span-2" 
         },
         {
             type: 'image',
             title: t.projects.items.windows,
             desc: t.projects.items.windows_desc,
-            image: "/assets/ventana2-reforma.jpg",
+            image: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg", 
             span: "md:col-span-2 md:row-span-1" 
         },
          {
             type: 'image',
             title: t.projects.items.facade_side,
             desc: t.projects.items.facade_side_desc,
-            image: "/assets/exterior3.jpg",
+            image: "/assets/IMG-20210205-WA0008.jpg", // ACTUALIZADO
             span: "md:col-span-1 md:row-span-1" 
         },
          {
             type: 'image',
             title: t.projects.items.kitchen,
             desc: t.projects.items.kitchen_desc,
-            image: "/assets/cocina-reforma.jpg",
+            image: "/assets/cocina.jpg", // ACTUALIZADO
             span: "md:col-span-1 md:row-span-1" 
         },
          {
             type: 'image',
             title: t.projects.items.facade_main,
             desc: t.projects.items.facade_main_desc,
-            image: "/assets/casa.jpg",
+            image: "/assets/IMG-20210205-WA0008.jpg", // ACTUALIZADO (Misma que lateral segun petición)
             span: "md:col-span-1 md:row-span-1" 
         }
     ];

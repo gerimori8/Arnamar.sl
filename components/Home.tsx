@@ -112,14 +112,14 @@ const Home: React.FC = () => {
                             </StaggerContainer>
                         </div>
 
-                        {/* Hero Image - casa.jpg (LOCAL) */}
+                        {/* Hero Image - PORTADA (Cliente) */}
                         <motion.div 
                             initial={{ opacity: 0, x: 50 }} 
                             animate={{ opacity: 1, x: 0 }} 
                             transition={{ duration: 1, delay: 0.2 }}
                             className="w-full lg:w-1/2 order-1 lg:order-2 aspect-[4/3] md:aspect-[16/9] max-h-[80vh]"
                         >
-                             <ParallaxImage src="/assets/casa.jpg" alt="Obra Nueva Arnamar" />
+                             <ParallaxImage src="/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" alt="Obra Nueva Arnamar" />
                         </motion.div>
                     </div>
                 </div>
@@ -147,10 +147,23 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {[
-                            { title: t.services.items.new_build, img: "/assets/baño.jpg" }, 
-                            { title: t.services.items.renovation_in, img: "/assets/baño-reforma2.jpg" }, 
-                            { title: t.services.items.renovation_out, img: "/assets/exterior3.jpg" }, 
-                            { title: t.services.items.windows, img: "/assets/ventana-reforma.jpg" } 
+                            // FIX: Using specific local assets as requested
+                            { 
+                                title: t.services.items.new_build, 
+                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" // ACTUALIZADO
+                            }, 
+                            { 
+                                title: t.services.items.renovation_in, 
+                                img: "/assets/IMG-20210205-WA0005.jpg" // ACTUALIZADO (Baño)
+                            },
+                            { 
+                                title: t.services.items.renovation_out, 
+                                img: "/assets/exterior2.jpg" // ACTUALIZADO
+                            },
+                            { 
+                                title: t.services.items.windows, 
+                                img: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg" 
+                            }
                         ].map((service, idx) => (
                             <StaggerContainer key={idx} delay={idx * 0.1}>
                                 <RevealItem>
@@ -189,20 +202,21 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
+                            // FIX: Updated images to specific local assets
                             { 
                                 title: t.projects.items.new_build, 
                                 desc: t.projects.items.new_build_desc,
-                                img: "/assets/exterior3.jpg" 
+                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" // ACTUALIZADO
                             },
                             { 
                                 title: t.projects.items.renovations, 
                                 desc: t.projects.items.renovations_desc,
-                                img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=2000&auto=format&fit=crop" 
+                                img: "/assets/IMG-20210205-WA0008.jpg" // ACTUALIZADO
                             },
                             { 
                                 title: t.projects.items.windows, 
                                 desc: t.projects.items.windows_desc,
-                                img: "/assets/ventana2-reforma.jpg" 
+                                img: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg" // Real Window
                             }
                         ].map((project, idx) => (
                             <StaggerContainer key={idx} delay={idx * 0.1}>

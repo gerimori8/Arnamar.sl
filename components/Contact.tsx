@@ -12,10 +12,20 @@ const Contact: React.FC = () => {
             exit={{ opacity: 0 }}
             className="py-24 bg-background-light dark:bg-background-dark min-h-screen relative overflow-hidden"
         >
+             {/* TRUST BACKGROUND IMAGE (Soft Integration) */}
+             <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10 pointer-events-none">
+                 <img 
+                    src="/assets/foto_confi.jpg" 
+                    alt="Equipo Arnamar" 
+                    className="w-full h-full object-cover grayscale"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-r from-background-light via-background-light/90 to-transparent dark:from-background-dark dark:via-background-dark/90"></div>
+             </div>
+
              {/* Background decoration */}
              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -z-10"></div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
                     
                     {/* Info */}

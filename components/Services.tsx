@@ -36,23 +36,23 @@ const ServiceCard: React.FC<{ service: any; index: number }> = ({ service, index
 const Services: React.FC = () => {
     const { t } = useLanguage();
 
-    // LISTA DE SERVICIOS DINÁMICA
+    // LISTA DE SERVICIOS - IMAGENES ESPECIFICAS
     const servicesList = [
         {
             title: t.services.items.new_build,
-            image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop" 
+            image: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" // ACTUALIZADO
         },
         {
             title: t.services.items.renovation_in,
-            image: "/assets/baño.jpg" 
+            image: "/assets/IMG-20210205-WA0005.jpg" // ACTUALIZADO (Baño)
         },
         {
             title: t.services.items.renovation_out,
-            image: "/assets/exterior3.jpg" 
+            image: "/assets/exterior2.jpg" // ACTUALIZADO
         },
         {
             title: t.services.items.windows,
-            image: "https://images.unsplash.com/photo-1600121848594-d8644e57abab?q=80&w=2000&auto=format&fit=crop" 
+            image: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg" 
         }
     ];
 
