@@ -1,4 +1,5 @@
 
+
 export type Language = 'es' | 'ca' | 'en';
 
 export const translations = {
@@ -49,6 +50,13 @@ export const translations = {
                 facade_main_desc: "Obra nueva completa."
             },
             cta: "Ver más"
+        },
+        home_imagine: {
+            badge: "Nueva Tecnología",
+            title: "Visualiza el futuro",
+            title_highlight: "antes de construir",
+            description: "No te lo imagines, véelo. Utiliza nuestra herramienta de Inteligencia Artificial para visualizar cómo quedará tu reforma antes de colocar el primer ladrillo. Sube una foto y deja que la magia ocurra.",
+            btn: "PROBAR SIMULADOR IA"
         },
         about: {
             title: "Sobre",
@@ -156,6 +164,13 @@ export const translations = {
             },
             cta: "Veure més"
         },
+        home_imagine: {
+            badge: "Nova Tecnologia",
+            title: "Visualitza el futur",
+            title_highlight: "abans de construir",
+            description: "No t'ho imaginis, veu-ho. Utilitza la nostra eina d'Intel·ligència Artificial per visualitzar com quedarà la teva reforma abans de posar el primer maó. Puja una foto i deixa que la màgia passi.",
+            btn: "PROVAR SIMULADOR IA"
+        },
         about: {
             title: "Sobre",
             title_highlight: "nosaltres",
@@ -261,6 +276,13 @@ export const translations = {
                 facade_main_desc: "Complete new build."
             },
             cta: "View more"
+        },
+        home_imagine: {
+            badge: "New Technology",
+            title: "Visualize the future",
+            title_highlight: "before you build",
+            description: "Don't just imagine it, see it. Use our AI technology to visualize your renovation before laying the first brick. Upload a photo and let magic happen.",
+            btn: "TRY AI SIMULATOR"
         },
         about: {
             title: "About",

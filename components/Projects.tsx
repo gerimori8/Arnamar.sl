@@ -48,8 +48,10 @@ const Project3DCard: React.FC<{ item: any, index: number }> = ({ item, index }) 
                     alt={item.title} 
                     className="w-full h-full object-cover transition-transform duration-700 ease-out scale-110 group-hover:scale-105" 
                     onError={(e) => {
-                        // Fallback simple por si falla la carga específica
-                        (e.target as HTMLImageElement).style.opacity = '0.5';
+                        // Fallback de seguridad: si la imagen falla, carga una genérica de casa
+                        const img = e.target as HTMLImageElement;
+                        img.onerror = null; // Evita bucles infinitos
+                        img.src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?q=80&w=800&auto=format&fit=crop";
                     }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -115,7 +117,8 @@ const Projects: React.FC = () => {
             type: 'image',
             title: t.projects.items.facade_main,
             desc: t.projects.items.facade_main_desc,
-            image: "/assets/IMG-20210205-WA0008.jpg", // ACTUALIZADO (Misma que lateral segun petición)
+            // Nueva imagen: Casa unifamiliar moderna con jardín, muy clara y estética
+            image: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?q=80&w=800&auto=format&fit=crop", 
             span: "md:col-span-1 md:row-span-1" 
         }
     ];

@@ -147,18 +147,17 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {[
-                            // FIX: Using specific local assets as requested
                             { 
                                 title: t.services.items.new_build, 
-                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" // ACTUALIZADO
+                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" 
                             }, 
                             { 
                                 title: t.services.items.renovation_in, 
-                                img: "/assets/IMG-20210205-WA0005.jpg" // ACTUALIZADO (Baño)
+                                img: "/assets/IMG-20210205-WA0005.jpg" 
                             },
                             { 
                                 title: t.services.items.renovation_out, 
-                                img: "/assets/exterior2.jpg" // ACTUALIZADO
+                                img: "/assets/exterior2.jpg" 
                             },
                             { 
                                 title: t.services.items.windows, 
@@ -202,21 +201,20 @@ const Home: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            // FIX: Updated images to specific local assets
                             { 
                                 title: t.projects.items.new_build, 
                                 desc: t.projects.items.new_build_desc,
-                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg" // ACTUALIZADO
+                                img: "/assets/e96f0e_0c4a895b715c41b1991522cf9dcc5709_mv2.jpg"
                             },
                             { 
                                 title: t.projects.items.renovations, 
                                 desc: t.projects.items.renovations_desc,
-                                img: "/assets/IMG-20210205-WA0008.jpg" // ACTUALIZADO
+                                img: "/assets/IMG-20210205-WA0008.jpg"
                             },
                             { 
                                 title: t.projects.items.windows, 
                                 desc: t.projects.items.windows_desc,
-                                img: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg" // Real Window
+                                img: "/assets/Copia_20de_20Dise_C3_B1o_20sin_20t_C3_ADtulo.jpg"
                             }
                         ].map((project, idx) => (
                             <StaggerContainer key={idx} delay={idx * 0.1}>
@@ -244,34 +242,186 @@ const Home: React.FC = () => {
                 </div>
             </section>
 
-            {/* CTA CONTACTO FINAL */}
-            <section className="py-24 relative overflow-hidden bg-primary text-white">
-                <div className="absolute inset-0 bg-black/10"></div>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+            {/* --- NUEVA SECCIÓN IMAGINA IA --- */}
+            <section className="py-24 md:py-32 relative overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-[#0a0a0a] dark:to-background-dark">
+                {/* Decorative Grid */}
+                <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, gray 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
                 
-                <div className="max-w-5xl mx-auto px-4 relative z-10 text-center">
-                    <RevealItem>
-                        <h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-                            {t.cta_section.title}
-                        </h2>
-                    </RevealItem>
-                    <RevealItem>
-                        <p className="text-xl md:text-2xl text-white/90 mb-10 font-light max-w-2xl mx-auto leading-relaxed">
-                            {t.cta_section.subtitle}
-                        </p>
-                    </RevealItem>
-                    <RevealItem>
-                        <Link to="/contacto">
-                            <motion.button
-                                whileHover={{ scale: 1.05, backgroundColor: "#f8fafc" }}
-                                whileTap={{ scale: 0.95 }}
-                                className="bg-white text-primary px-10 py-5 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 mx-auto"
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="flex flex-col lg:flex-row items-center gap-16">
+                        {/* Text Content */}
+                        <div className="w-full lg:w-1/2 order-2 lg:order-1">
+                            <StaggerContainer>
+                                <RevealItem>
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold text-[10px] uppercase tracking-widest mb-6">
+                                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                        {t.home_imagine.badge}
+                                    </div>
+                                </RevealItem>
+                                <RevealItem>
+                                    <h2 className="font-display text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+                                        {t.home_imagine.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">{t.home_imagine.title_highlight}</span>
+                                    </h2>
+                                </RevealItem>
+                                <RevealItem>
+                                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed max-w-md">
+                                        {t.home_imagine.description}
+                                    </p>
+                                </RevealItem>
+                                <RevealItem>
+                                    <Link to="/imagina">
+                                        <motion.button 
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="px-8 py-4 bg-brand-black dark:bg-white text-white dark:text-brand-black rounded-full font-bold shadow-2xl hover:shadow-primary/30 flex items-center gap-3 group"
+                                        >
+                                            <span>{t.home_imagine.btn}</span>
+                                            <span className="material-icons group-hover:rotate-12 transition-transform">auto_awesome</span>
+                                        </motion.button>
+                                    </Link>
+                                </RevealItem>
+                            </StaggerContainer>
+                        </div>
+
+                        {/* Visual scanning effect */}
+                        <div className="w-full lg:w-1/2 order-1 lg:order-2 relative">
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
+                                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                                transition={{ duration: 0.8 }}
+                                viewport={{ once: true }}
+                                className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800 bg-gray-100 aspect-[4/3] group"
                             >
-                                <span>{t.cta_section.button}</span>
-                                <span className="material-icons">arrow_forward</span>
-                            </motion.button>
-                        </Link>
-                    </RevealItem>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1000&auto=format&fit=crop" 
+                                    alt="Interior AI Scan" 
+                                    className="w-full h-full object-cover filter grayscale-[30%] group-hover:grayscale-0 transition-all duration-700" 
+                                />
+                                
+                                {/* Overlay Gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
+
+                                {/* Scanning Line Animation */}
+                                <motion.div 
+                                    animate={{ top: ['0%', '100%', '0%'] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                    className="absolute left-0 w-full h-1 bg-primary/80 shadow-[0_0_20px_rgba(141,160,110,0.8)] z-20"
+                                ></motion.div>
+                                
+                                {/* Floating UI Elements */}
+                                <div className="absolute top-6 right-6 bg-white/90 dark:bg-black/80 backdrop-blur p-4 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 z-30">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                                            <span className="material-icons text-primary text-sm">analytics</span>
+                                        </div>
+                                        <div>
+                                            <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded mb-1"></div>
+                                            <div className="h-2 w-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                         <div className="flex gap-1">
+                                             <div className="h-1 w-full bg-primary rounded-full"></div>
+                                             <div className="h-1 w-1/3 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                                         </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* HOME CONTACT SECTION (Replaces old CTA) */}
+            <section className="relative w-full min-h-[800px] flex items-center overflow-hidden">
+                {/* Background Image with Advanced Gradient Mask */}
+                <div className="absolute inset-0 z-0">
+                    <img 
+                        src="/assets/foto_confi.jpg" 
+                        alt="Equipo Arnamar" 
+                        className="w-full h-full object-cover"
+                    />
+                    {/* The Gradient Mask: Solid on Left -> Fading to Right */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-background-light via-background-light/95 to-background-light/10 dark:from-background-dark dark:via-background-dark/95 dark:to-background-dark/10"></div>
+                    
+                    {/* Addtional slight blur on the right for better text integration if needed */}
+                    <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[2px]"></div>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        {/* Form Side (On the solid background) */}
+                        <div className="order-2 lg:order-1">
+                            <StaggerContainer>
+                                <RevealItem>
+                                    <div className="mb-8">
+                                        <span className="text-primary font-bold tracking-[0.2em] uppercase">{t.contact.tag}</span>
+                                        <h2 className="font-display text-5xl font-bold text-gray-900 dark:text-white mt-4 mb-4">
+                                            {t.contact.title}
+                                        </h2>
+                                        <p className="text-gray-600 dark:text-gray-400 text-lg">
+                                            {t.cta_section.subtitle}
+                                        </p>
+                                    </div>
+                                </RevealItem>
+                                
+                                <RevealItem>
+                                    <form action="https://formsubmit.co/arnamar2011sl@gmail.com" method="POST" className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-1">
+                                                <label htmlFor="home-nombre" className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 ml-1">{t.contact.form.name}</label>
+                                                <input type="text" id="home-nombre" name="nombre" className="w-full px-4 py-3 bg-white/80 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all backdrop-blur-sm" required />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label htmlFor="home-email" className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 ml-1">{t.contact.form.email}</label>
+                                                <input type="email" id="home-email" name="email" className="w-full px-4 py-3 bg-white/80 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all backdrop-blur-sm" required />
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-1">
+                                            <label htmlFor="home-telefono" className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 ml-1">{t.contact.form.phone}</label>
+                                            <input type="tel" id="home-telefono" name="telefono" className="w-full px-4 py-3 bg-white/80 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all backdrop-blur-sm" />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label htmlFor="home-mensaje" className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 ml-1">{t.contact.form.message}</label>
+                                            <textarea id="home-mensaje" name="mensaje" rows={3} placeholder={t.contact.form.placeholder} className="w-full px-4 py-3 bg-white/80 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none backdrop-blur-sm"></textarea>
+                                        </div>
+
+                                        <button type="submit" className="w-full py-4 px-8 bg-primary text-white font-bold rounded-xl hover:bg-secondary hover:shadow-lg transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                                            <span>{t.contact.form.send}</span>
+                                            <span className="material-icons text-sm">send</span>
+                                        </button>
+                                    </form>
+                                </RevealItem>
+                            </StaggerContainer>
+                        </div>
+
+                        {/* Visual Side (Transparent Area) */}
+                        <div className="order-1 lg:order-2 hidden lg:block">
+                            {/* This area is intentionally left relatively empty to let the background image shine through, 
+                                but we can add floating glass cards for contact info */}
+                            <motion.div 
+                                initial={{ opacity: 0, x: 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.3 }}
+                                className="flex flex-col gap-6 items-end"
+                            >
+                                <div className="bg-white/10 dark:bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/20 dark:border-white/5 shadow-2xl max-w-xs text-right">
+                                    <span className="material-icons text-primary text-3xl mb-2">phone_in_talk</span>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">670 968 931</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">Atención personalizada</p>
+                                </div>
+                                
+                                <div className="bg-white/10 dark:bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/20 dark:border-white/5 shadow-2xl max-w-xs text-right">
+                                     <span className="material-icons text-primary text-3xl mb-2">mark_email_read</span>
+                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white break-all">arnamar2011sl@gmail.com</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">Respuesta en 24h</p>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
