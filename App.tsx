@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 import { LanguageProvider } from './context/LanguageContext';
 import Header from './components/Header';
 import Home from './components/Home';
@@ -164,6 +165,7 @@ const App: React.FC = () => {
                     <Footer />
                     <ChatBot />
                     <CookieBanner />
+                    <Analytics />
                 </div>
             </Router>
         </LanguageProvider>
