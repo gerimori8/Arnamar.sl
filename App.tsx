@@ -162,8 +162,8 @@ const App: React.FC = () => {
                         <AnimatedRoutes />
                     </main>
                     <Footer />
-                    <ChatBot />
                     <CookieBanner />
+                    <ChatBot />
                 </div>
             </Router>
         </LanguageProvider>

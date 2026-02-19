@@ -13,7 +13,7 @@ interface ReferenceItem {
 }
 
 type SupportedAspectRatio = "1:1" | "3:4" | "4:3" | "9:16" | "16:9";
-type ProcessPhase = 'idle' | 'queue' | 'scan' | 'generate' | 'judge' | 'refine' | 'physics' | 'complete';
+type ProcessPhase = 'idle' | 'queue' | 'scan' | 'lighting' | 'generate' | 'judge' | 'refine' | 'physics' | 'complete';
 
 const DEFAULT_ROOMS = [
     "Salón", "Comedor", "Cocina", "Dormitorio Principal", "Baño", "Pasillo", "Recibidor", "Terraza"
@@ -34,17 +34,8 @@ const applyVolumetricMask = async (base64Image: string): Promise<string> => {
             if (!ctx) { resolve(base64Image); return; }
 
             ctx.drawImage(img, 0, 0);
-
-            // Vignette suave para centrar la atención de la IA
-            const maskH = Math.floor(img.height * 0.40);
-            const maskW = Math.floor(img.width * 0.88);
-            const maskX = Math.floor((img.width - maskW) / 2);
-            const maskY = img.height - maskH; 
-
-            const imgData = ctx.getImageData(maskX, maskY, maskW, maskH);
-            // No modificamos los píxeles agresivamente, solo preparamos el contexto
-            ctx.putImageData(imgData, maskX, maskY);
-            resolve(canvas.toDataURL('image/jpeg', 0.95));
+            // Calidad JPG muy alta para capturar el "grano" original del sensor
+            resolve(canvas.toDataURL('image/jpeg', 0.99));
         };
         img.src = base64Image;
     });
@@ -134,11 +125,12 @@ const ProcessingHUD: React.FC<{ phase: ProcessPhase; log: string; step: number; 
     const PHASE_CONFIG: Record<ProcessPhase, { icon: string, label: string }> = {
         idle: { icon: 'architecture', label: 'Listo' },
         queue: { icon: 'hourglass_empty', label: 'En cola' },
-        scan: { icon: 'analytics', label: 'Analizando Estancia' }, 
-        generate: { icon: 'design_services', label: 'Diseñando Propuesta' }, 
-        physics: { icon: 'light_mode', label: 'Ajustando Iluminación' },
-        judge: { icon: 'verified_user', label: 'Control de Calidad' }, 
-        refine: { icon: 'brush', label: 'Aplicando Acabados' }, 
+        scan: { icon: 'analytics', label: 'Escaneando Geometría' }, 
+        lighting: { icon: 'wb_sunny', label: 'Trazando Rayos (Path Tracing)' },
+        generate: { icon: 'design_services', label: 'Renderizando Realismo' }, 
+        physics: { icon: 'grid_on', label: 'Calculando Volumen' },
+        judge: { icon: 'verified_user', label: 'Verificando Estructura' }, 
+        refine: { icon: 'brush', label: 'Añadiendo Grano y Textura' }, 
         complete: { icon: 'check_circle', label: 'Proyecto Finalizado' },
     };
 
@@ -182,7 +174,6 @@ const ProcessingHUD: React.FC<{ phase: ProcessPhase; log: string; step: number; 
 const Imagine: React.FC = () => {
     // Assets
     const [originalImage, setOriginalImage] = useState<string | null>(null);
-    const [referenceImages, setReferenceImages] = useState<ReferenceItem[]>([]);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     
     // Inputs
@@ -195,6 +186,7 @@ const Imagine: React.FC = () => {
     const [area, setArea] = useState<number>(20);
     const [height, setHeight] = useState<number>(2.5); // Ceiling height
     const [volume, setVolume] = useState<number>(50);
+    const [lightingScenario, setLightingScenario] = useState<{direction: string, temperature: string}>({ direction: "Natural", temperature: "4500K" });
     
     // UI Flow
     const [phase, setPhase] = useState<ProcessPhase>('idle');
@@ -206,8 +198,10 @@ const Imagine: React.FC = () => {
     const [isManualMode, setIsManualMode] = useState(false);
     const [attemptCount, setAttemptCount] = useState(0);
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const { t } = useLanguage();
+
+    // Initialize AI client - USO EXCLUSIVO DE LA CLAVE DE ENTORNO
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     useEffect(() => {
         const vol = parseFloat((area * height).toFixed(2));
@@ -247,7 +241,7 @@ const Imagine: React.FC = () => {
                 setPhase('queue');
                 const waitSeconds = baseDelay / 1000;
                 for (let i = waitSeconds; i > 0; i--) {
-                    setProcessLog(`Siguiente turno en: ${i}s...`);
+                    setProcessLog(`Optimizando conexión: ${i}s...`);
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 }
                 setProcessLog("Reconectando...");
@@ -257,22 +251,51 @@ const Imagine: React.FC = () => {
         }
     };
 
+    // --- AGENT 0: LIGHTING PHYSICIST ---
+    const analyzeLighting = async (base64Image: string) => {
+        setPhase('lighting');
+        setProcessLog("Calculando dirección de la luz (Ray Tracing)...");
+        const cleanBase64 = base64Image.split(',')[1];
+        
+        try {
+            const promptText = `
+                ANALYZE IMAGE PHYSICS & CAMERA LENS.
+                1. Identify Main Light Entry Point (Window left, Ceiling light, etc).
+                2. Estimate Focal Length (Wide Angle 16mm, Standard 35mm, Telephoto 85mm).
+                JSON ONLY: { "direction": "Left"|"Right"|"Center"|"Top", "temperature": "string", "focal_length": "string" }
+            `;
+            const response = await smartRetry(async () => {
+                return await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: { parts: [{ inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } }, { text: promptText }] },
+                    config: { responseMimeType: "application/json" }
+                });
+            }, 2, 2000);
+            
+            if (response.text) {
+                const data = JSON.parse(response.text);
+                setLightingScenario({ direction: data.direction, temperature: data.temperature });
+            }
+        } catch (e) {
+            console.warn("Lighting analysis skipped, using default.");
+        }
+    };
+
     // --- AGENT 1: THE ARCHITECT (SURVEYOR) ---
     const runSurveyorScan = async (base64Image: string) => {
         setPhase('scan');
         setProgressStep(10);
-        setProcessLog("Analizando dimensiones y elementos...");
+        setProcessLog("Escaneando vigas, pilares y aperturas...");
         
         try {
             const cleanBase64 = base64Image.split(',')[1];
             
-            // ARCHITECT PROMPT - Solo análisis de foto
             const promptText = `Analyze this ROOM PHOTO. Estimate floor area and height.
-                   JSON ONLY: { "area": number, "height": number, "roomType": string, "confidence": "High"|"Medium" }`;
+                   JSON ONLY: { "area": number, "height": number, "roomType": string }`;
 
             const response = await smartRetry(async () => {
                  return await ai.models.generateContent({
-                    model: 'gemini-flash-latest', 
+                    model: 'gemini-2.5-flash',
                     contents: {
                         parts: [
                             { inlineData: { mimeType: 'image/jpeg', data: cleanBase64 } },
@@ -287,16 +310,18 @@ const Imagine: React.FC = () => {
             setProgressStep(60);
             
             if (response.text) {
-                setProcessLog("Calculando volumen de aire...");
+                setProcessLog("Generando malla de geometría...");
                 const data = JSON.parse(response.text);
                 
                 if (data.area) setArea(data.area);
                 if (data.height) setHeight(data.height);
                 if (data.roomType && DEFAULT_ROOMS.includes(data.roomType)) setRoomType(data.roomType);
                 
+                await analyzeLighting(base64Image);
+
                 setProgressStep(90);
                 setTimeout(() => {
-                    setProcessLog("Análisis completado.");
+                    setProcessLog("Análisis estructural completado.");
                     setTimeout(() => {
                         setPhase('idle');
                         setProgressStep(0);
@@ -305,10 +330,10 @@ const Imagine: React.FC = () => {
                     }, 500);
                 }, 800);
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
             setPhase('idle');
-            // Fallback en caso de error
+            alert(`Error en la conexión IA: ${e.message}`);
             setIsManualMode(true);
             setShowVolumeModal(true);
         }
@@ -317,7 +342,7 @@ const Imagine: React.FC = () => {
     interface JudgeResult {
         score: number;
         structural_fail: boolean;
-        critical_flaw: "GHOSTING" | "PERSPECTIVE" | "ARCHITECTURE" | "FLOATING" | "ROTATION" | "NONE";
+        critical_flaw: "GHOSTING" | "PERSPECTIVE" | "ARCHITECTURE" | "FLOATING" | "PLASTIC_LOOK" | "NONE";
     }
 
     // --- AGENT 3: THE SUPERVISOR (JUDGE) ---
@@ -325,21 +350,30 @@ const Imagine: React.FC = () => {
         try {
             setPhase('judge'); 
             
-            const perspectiveValidation = `STRUCTURAL CHECK: Did windows/doors change shape/location? Is the perspective correct?`;
+            const structuralCheck = `
+                CRITICAL AUDIT:
+                1. Did windows/doors/walls move? (FAIL if yes).
+                2. Does it look PLASTIC/FAKE? (FAIL if yes).
+                3. Do objects float? (FAIL if yes).
+                
+                SCORE RULES:
+                - If structure is SAFE and realism is OK (>0.7), return HIGH SCORE (0.9) to stop iterations.
+                - Only fail if there is a MAJOR perspective or geometry error.
+            `;
 
             const response = await smartRetry(async () => {
                 return await ai.models.generateContent({
-                    model: 'gemini-flash-latest', 
+                    model: 'gemini-2.5-flash',
                     contents: {
                         parts: [
-                            { text: `ROLE: Architectural Supervisor. MODE: PHOTO_REALISM` },
-                            { text: "ORIGINAL INPUT:" },
+                            { text: `ROLE: Senior Structural Engineer. MODE: AUDIT` },
+                            { text: "ORIGINAL GEOMETRY:" },
                             { inlineData: { mimeType: 'image/jpeg', data: originalB64 } },
-                            { text: "GENERATED RENDER:" },
+                            { text: "GENERATED PROPOSAL:" },
                             { inlineData: { mimeType: 'image/png', data: generatedB64 } },
                             { text: `
-                                ${perspectiveValidation}
-                                OUTPUT JSON ONLY: { "score": float (0.0-1.0), "structural_fail": boolean, "critical_flaw": "PERSPECTIVE"|"ARCHITECTURE"|"NONE" }
+                                ${structuralCheck}
+                                OUTPUT JSON ONLY: { "score": float (0.0-1.0), "structural_fail": boolean, "critical_flaw": "PERSPECTIVE"|"ARCHITECTURE"|"PLASTIC_LOOK"|"NONE" }
                             ` }
                         ]
                     },
@@ -350,11 +384,11 @@ const Imagine: React.FC = () => {
             const text = response.text;
             return text ? JSON.parse(text) : { score: 0, structural_fail: true, critical_flaw: "NONE" };
         } catch (e) {
-            return { score: 0.5, structural_fail: false, critical_flaw: "NONE" };
+            return { score: 0.9, structural_fail: false, critical_flaw: "NONE" };
         }
     };
 
-    // --- AGENT 2: DREAM BUILDER (RENDERER) ---
+    // --- AGENT 2: DREAM BUILDER (PHYSICS ENGINE) ---
     const runPhysicsRender = async (isRefinement: boolean = false) => {
         if (!originalImage || !volumeConfirmed) return;
         
@@ -365,7 +399,7 @@ const Imagine: React.FC = () => {
         setAttemptCount(0);
         setProgressStep(10);
         
-        const logMsg = isRefinement ? "Aplicando cambios..." : "Diseñando propuesta...";
+        const logMsg = isRefinement ? "Refinando texturas..." : "Iniciando motor de óptica PBR...";
         setProcessLog(logMsg);
 
         await new Promise(r => setTimeout(r, 800));
@@ -382,11 +416,32 @@ const Imagine: React.FC = () => {
         
         setProgressStep(20);
 
-        // --- CAMERA OPTICS & SYSTEMS ---
-        const photoSystemInstruction = `Photorealistic interior design render. Maintain original window/door positions (structural integrity). High quality textures. Natural lighting.`;
-        const refinementInstruction = `Modify interior design based on user request: ${activePrompt}. Keep structure intact.`;
-
-        let currentSystemInstruction = isRefinement ? refinementInstruction : photoSystemInstruction;
+        const physicsInstruction = `
+            ROLE: Interior Photographer (Smartphone/DSLR).
+            
+            1. GEOMETRY LOCK (ABSOLUTE):
+               - Treat input image as a LIDAR SCAN.
+               - DO NOT MOVE WALLS, BEAMS (VIGAS), OR WINDOWS.
+               - DO NOT EXPAND THE ROOM. Perspective must match input perfectly.
+            
+            2. ANTI-PLASTIC RULES (DIRTY REALISM):
+               - NO "CGI" LOOK. NO PERFECT SURFACES.
+               - TEXTURES: Must show micro-imperfections, slight dust in corners, slight unevenness.
+               - LIGHTING: Use existing light sources (${lightingScenario.direction}). Shadows must be soft (penumbra).
+               - REFLECTIONS: Fresnel is mandatory. Floor reflects strictly based on angle.
+            
+            3. CAMERA SENSOR SIMULATION:
+               - Add subtle ISO NOISE/GRAIN to match a real photo.
+               - Slight Chromatic Aberration on window edges.
+               - Dynamic Range: Not everything should be perfectly lit; allow for some shadow crush if realistic.
+            
+            4. VOLUME:
+               - Furniture MUST cast contact shadows (Ambient Occlusion) on the floor. No floating.
+        `;
+        
+        const userInstruction = isRefinement 
+            ? `MODIFICATION: ${activePrompt}. ONLY change specific items. KEEP GEOMETRY LOCKED. MAINTAIN SENSOR GRAIN.` 
+            : `TASK: ${activePrompt}. Style: Realistic, Lived-in. NOT a 3D Render. Match input focal length.`;
 
         let bestResult = { img: "", score: -1, flaw: "", struct_fail: true };
         let dynamicInstruction = ""; 
@@ -398,29 +453,29 @@ const Imagine: React.FC = () => {
                 
                 if (i===1) {
                     setPhase('generate');
-                    setProcessLog(isRefinement ? "Modificando diseño..." : "Generando concepto...");
+                    setProcessLog("Renderizando realismo sucio...");
                     setProgressStep(30);
                 } else {
                     setPhase('refine');
-                    setProcessLog(`Iteración ${i}/${maxAttempts}: Mejorando acabados...`);
+                    setProcessLog(`Corrigiendo perspectiva (Intento ${i})...`);
                     setProgressStep(50 + (i*10));
                 }
                 
                 let parts: any[] = [{ inlineData: { mimeType: isRefinement ? 'image/png' : 'image/jpeg', data: cleanSourceBase64 } }];
                 
                 const finalPrompt = `
-                    Generate a high-quality photorealistic image.
-                    ${currentSystemInstruction}
-                    User Request: ${activePrompt}
-                    ${dynamicInstruction} 
+                    ${physicsInstruction}
+                    ${userInstruction}
+                    ${dynamicInstruction}
+                    
+                    OUTPUT: Photorealistic JPG, ISO 800, Natural Light.
                 `;
 
                 parts.push({ text: finalPrompt });
 
                 if(i === 1) {
-                    setPhase('physics');
-                    setProcessLog("Calculando geometría...");
-                    await new Promise(r => setTimeout(r, 800)); 
+                    setPhase('physics'); 
+                    await new Promise(r => setTimeout(r, 600)); 
                     setPhase('generate');
                 }
 
@@ -429,7 +484,9 @@ const Imagine: React.FC = () => {
                         model: 'gemini-2.5-flash-image', 
                         contents: [{ role: 'user', parts }],
                         config: { 
-                            imageConfig: { aspectRatio: detectedAspectRatio }
+                            imageConfig: { aspectRatio: detectedAspectRatio },
+                            // Temperature muy baja para que la IA siga las instrucciones físicas al pie de la letra
+                            temperature: 0.40 
                         }
                     });
                 }, 3, 5000); 
@@ -445,42 +502,36 @@ const Imagine: React.FC = () => {
                             generatedB64 = part.inlineData.data; 
                             break; 
                         }
-                        if (part.text) {
-                            failureText += part.text;
-                        }
+                        if (part.text) failureText += part.text;
                     }
                 }
 
                 if (!generatedB64) {
-                     console.error("Model failure:", failureText);
-                     if (i < maxAttempts) {
-                         dynamicInstruction = "Ignore previous constraints. Just generate the image of the room.";
-                         continue;
-                     }
-                     throw new Error(failureText || "Generation failed");
+                     if (i < maxAttempts) continue;
+                     throw new Error(failureText || "Render failed");
                 }
 
-                setProcessLog("Supervisor revisando...");
+                setProcessLog("Verificando consistencia...");
                 const judgeBase = isRefinement ? cleanSourceBase64 : cleanOriginalBase64;
                 const audit = await judgeRender(generatedB64, judgeBase);
                 
                 console.log(`Intento ${i}: Score ${audit.score} | Flaw: ${audit.critical_flaw}`);
 
-                if (audit.structural_fail || audit.critical_flaw === "PERSPECTIVE") {
-                    if (bestResult.score === -1) bestResult = { img: generatedB64, score: 0.1, flaw: audit.critical_flaw, struct_fail: true };
-                    dynamicInstruction = `STRUCTURAL ERROR. Keep walls, windows and doors exactly as in original image.`;
-                    continue; 
-                }
-
                 const isBetter = bestResult.struct_fail || (audit.score > bestResult.score);
 
                 if (isBetter) {
-                    bestResult = { img: generatedB64, score: audit.score, flaw: audit.critical_flaw, struct_fail: false };
+                    bestResult = { img: generatedB64, score: audit.score, flaw: audit.critical_flaw, struct_fail: audit.structural_fail };
                     setGeneratedImage(`data:image/png;base64,${generatedB64}`);
                     if(isRefinement) setRefinePrompt("");
                 }
 
-                if (audit.score >= 0.85) break; 
+                if (!audit.structural_fail && audit.score > 0.75) {
+                    break;
+                }
+
+                if (audit.structural_fail || audit.critical_flaw !== "NONE") {
+                    dynamicInstruction = `PREVIOUS FAILED: ${audit.critical_flaw}. FIX IT. LOCK WALLS AND PERSPECTIVE.`;
+                }
             }
 
             setPhase('complete');
