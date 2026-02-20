@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.arnamar2011.com/sitemap.xml
