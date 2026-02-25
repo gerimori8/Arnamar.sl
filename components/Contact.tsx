@@ -71,7 +71,10 @@ const Contact: React.FC = () => {
                     <div className="bg-white dark:bg-[#121212] p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-800 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
                         
-                        <form action="https://formsubmit.co/arnamar2011sl@gmail.com" method="POST" className="space-y-6">
+                        <form action="https://formsubmit.co/gerardmp2008@gmail.com" method="POST" className="space-y-6">
+                            <input type="hidden" name="_subject" value="Nuevo mensaje de contacto - Arnamar Web" />
+                            <input type="hidden" name="_template" value="table" />
+                            <input type="hidden" name="_captcha" value="false" />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label htmlFor="nombre" className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 ml-1">{t.contact.form.name}</label>

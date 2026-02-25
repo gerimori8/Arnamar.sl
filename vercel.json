@@ -1,0 +1,10 @@
+{
+  "routes": [
+    {
+      "src": "/(.*)",
+      "headers": {
+        "x-prerender": "1"
+      }
+    }
+  ]
+}
